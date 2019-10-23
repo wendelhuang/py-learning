@@ -1,0 +1,38 @@
+from multiprocessing import Process
+import multiprocessing
+import time
+
+global_map = multiprocessing.Manager().dict()
+
+def job1():
+	while True:
+		print('job1 is doing')
+		global_map['job1'] = 'doing'
+		time.sleep(3)
+	
+def job2():
+	while True:
+		print('job2 is doing')
+		global_map['job2'] = 'doing'
+		time.sleep(5)
+
+def main():
+	p1 = Process(target=job1)
+	p2 = Process(target=job2)
+	p1.start()
+	p2.start()
+	
+	time.sleep(10)
+	while True:
+		time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
+		print(global_map)
+		print('%s: job1: %s, job2: %s' % (time_str, global_map['job1'], global_map['job2']))
+		if (global_map['job1'] != None and global_map['job2'] != None):
+			print('remove job state')
+			del global_map['job1']
+			del global_map['job2']
+		time.sleep(10)
+
+
+if __name__ == '__main__':
+	main()
